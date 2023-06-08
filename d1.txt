@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+// Structure to represent a node in the binary search tree
+struct Node {
+ int key;
+ Node* left;
+ Node* right;
+ Node(int k) {
+ key = k;
+ left = nullptr;
+ right = nullptr;
+ }
+};
+// Function to build the optimal binary search tree
+Node* buildOptimalBST(vector<int>& keys, vector<double>& probabilities, int start, int end) {
+ // Base case: no keys in the range
+ if (start > end) {
+ return nullptr;
+ }
+ // Find the index of the root with minimum average search cost
+ int minRootIndex = start;
+ double minCost = probabilities[start];
+ for (int i = start + 1; i <= end; i++) {
+ if (probabilities[i] < minCost) {
+ minCost = probabilities[i];
+ minRootIndex = i;
+ }
+ }
+ // Create the root node
+ Node* root = new Node(keys[minRootIndex]);
+ // Recursively build the left and right subtrees
+ root->left = buildOptimalBST(keys, probabilities, start, minRootIndex - 1);
+ root->right = buildOptimalBST(keys, probabilities, minRootIndex + 1, end);
+ return root;
+}
+// Function to print the keys of the binary search tree in inorder traversal
+void inorderTraversal(Node* root) {
+ if (root == nullptr) {
+ return;
+ }
+ inorderTraversal(root->left);
+ cout << root->key << " ";
+ inorderTraversal(root->right);
+}
+int main() {
+ // Sorted keys
+ vector<int> keys = {10, 20, 30, 40, 50};
+ // Access probabilities for each key
+ vector<double> probabilities = {0.1, 0.2, 0.05, 0.1, 0.15};
+ // Build the optimal binary search tree
+ Node* root = buildOptimalBST(keys, probabilities, 0, keys.size() - 1);
+ // Print the keys of the binary search tree in inorder traversal
+ cout << "Keys in the optimal binary search tree (inorder traversal): ";
+ inorderTraversal(root);
+ cout << endl;
+ return 0;
+}
